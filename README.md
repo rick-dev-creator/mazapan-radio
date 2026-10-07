@@ -42,8 +42,9 @@ list of every song you heard, to find it again.
 
 ![The songs heard, to find them again](media/heard.webp)
 
-`SUPER + ALT + R` opens it. In the panel: `/` searches, the arrows move
-through the cards, Enter plays, Space plays or pauses, F keeps a favorite,
+`SUPER + ALT + R` opens it. In the panel: `/` searches (Enter goes to the
+results), Tab and Shift+Tab move through the lists on the left, the arrows
+move through the cards, Enter plays, Space plays or pauses, F keeps a favorite,
 N and P go to the next and previous station, Esc clears the search or
 closes (so does a click outside).
 

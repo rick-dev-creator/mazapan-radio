@@ -63,6 +63,25 @@ Item {
     grid.currentIndex = -1
   }
 
+  // The left column in order, for Tab and Shift+Tab.
+  readonly property var places: moods.map(m => ["mood:" + m.key, m.label]).concat([
+    ["popular", {{ tq "popular" }}], ["favorites", {{ tq "favorites" }}], ["recent", {{ tq "recent" }}],
+    ["heard", {{ tq "heard" }}], ["near", {{ tq "near" }}], ["countries", {{ tq "world" }}]])
+  function step(d) {
+    const i = places.findIndex(p => p[0] === view)
+    const p = places[(i + d + places.length) % places.length]
+    go(p[0], p[1])
+  }
+
+  // After a search, the first result is picked once it's there.
+  property bool pickFirst: false
+  Connections {
+    target: Radio
+    function onResultsChanged() {
+      if (root.pickFirst && Radio.results.length) { grid.currentIndex = 0; root.pickFirst = false }
+    }
+  }
+
   function toggle() { open ? close() : show() }
   function show() {
     screenAtOpen = Quickshell.screens.find(s => Hyprland.focusedMonitor && s.name === Hyprland.focusedMonitor.name) ?? Quickshell.screens[0]
@@ -129,6 +148,8 @@ Item {
           } else if (typing) {
             return
           } else if (event.key === Qt.Key_Slash) search.focusInput()
+          else if (event.key === Qt.Key_Tab) root.step(1)
+          else if (event.key === Qt.Key_Backtab) root.step(-1)
           else if (event.key === Qt.Key_Space) rd.toggle()
           else if (event.key === Qt.Key_N) rd.next()
           else if (event.key === Qt.Key_P) rd.previous()
@@ -281,10 +302,13 @@ Item {
                 id: search
                 Layout.fillWidth: true
                 placeholder: {{ tq "search" }}
+                // Enter: the results take the keys, the first one picked.
                 onAccepted: if (text.trim()) {
                   root.view = "search"
                   root.viewTitle = "“" + text.trim() + "”"
                   rd.browse("search", text.trim())
+                  root.pickFirst = true
+                  keys.forceActiveFocus()
                 }
               }
               PillButton {
