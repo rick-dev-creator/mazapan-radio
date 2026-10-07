@@ -1,0 +1,165 @@
+[plugin]
+id = "radio"
+name = "Radio"
+version = "0.1.0"
+api = 1
+description = "Live radio from all over the world, found by mood, country or name: each song's cover and colors as it plays, the songs you heard to find again, favorites, a sleep timer and an alarm, and the media keys"
+requires = ["shell-bar", "hypr-base"]
+categories = ["panel", "bar", "tools"]
+author = "RickDev"
+homepage = "https://github.com/rick-dev-creator/mazapan-radio"
+license = "MIT"
+
+# How it looks, for the plugin gallery (mazapan.dev/plugins).
+[gallery]
+icon = "media/icon.svg"
+screenshots = ["media/panel.webp", "media/heard.webp", "media/light.webp"]
+
+# mpv plays; Python's D-Bus speaks MPRIS (the media keys, the bar's player);
+# cava draws the sound; wl-clipboard copies a song heard.
+[packages]
+pacman = ["mpv", "python", "python-dbus", "python-gobject", "cava", "wl-clipboard", "xdg-utils"]
+
+[settings]
+# Opens the radio.
+key = "SUPER + ALT + R"
+# The radio in the bar while one is on.
+bar = true
+# Each song's cover, looked up on iTunes by the song's name (nothing else is sent).
+song_art = true
+# The sound drawn as it plays, in the panel (cava listens to what goes out).
+visualizer = true
+# "Near you": a country's two letters (JP, MX, DE…); empty, the system's.
+country = ""
+
+# The settings, read live by the panel and the player.
+[[targets]]
+template = "settings.json.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/settings.json"
+
+[[targets]]
+template = "cava.conf.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/cava.conf"
+
+# The player: plays on with the panel closed.
+[[targets]]
+template = "radio.py.tmpl"
+output = "~/.local/share/mazapan/bin/radio"
+reload = "systemctl --user try-restart mazapan-radio.service 2>/dev/null; true"
+
+[[targets]]
+template = "radio.service.tmpl"
+output = "~/.config/systemd/user/mazapan-radio.service"
+# Gone (the plugin off): stopped, its alarm too.
+reload = "systemctl --user daemon-reload; [ -e ~/.config/systemd/user/mazapan-radio.service ] || systemctl --user stop mazapan-radio.service mazapan-radio-alarm.timer 2>/dev/null; true"
+
+# The radio, for the shell, and its pieces.
+[[targets]]
+template = "qmldir.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/qmldir"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "RadioService.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/RadioService.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Logo.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Logo.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "StationCard.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/StationCard.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Backdrop.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Backdrop.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Bars.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Bars.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Control.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Control.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Marquee.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Marquee.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "TrackText.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/TrackText.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Seek.qml.tmpl"
+output = "~/.config/quickshell/mazapan/components/radio/Seek.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Bar.qml.tmpl"
+output = "~/.config/quickshell/mazapan/widgets/right/04-radio.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "Panel.qml.tmpl"
+output = "~/.config/quickshell/mazapan/panels/radio.qml"
+reload = "sh ~/.local/share/mazapan/bin/shell-reload"
+
+[[targets]]
+template = "radio.lua.tmpl"
+output = "~/.config/hypr/mazapan/radio.lua"
+reload = "hyprctl reload >/dev/null"
+
+[[actions]]
+name = "{{ t \"act.open\" }}"
+run = "qs ipc -c mazapan call mazapan panel radio"
+# On the palette's first screen, among the places.
+home = 34
+glyph = "󰐹"
+label = "{{ t \"title\" }}"
+key = "{{ settings.key }}"
+keywords = "{{ t \"act.open.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.favorites\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune favorites"
+keywords = "{{ t \"act.favorites.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.random\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune random"
+keywords = "{{ t \"act.random.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.focus\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune ambient"
+keywords = "{{ t \"act.focus.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.jazz\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune jazz"
+keywords = "{{ t \"act.jazz.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.lofi\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune lofi"
+keywords = "{{ t \"act.lofi.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.news\" }}"
+run = "python3 ~/.local/share/mazapan/bin/radio tune news"
+keywords = "{{ t \"act.news.kw\" }}"
+
+[[actions]]
+name = "{{ t \"act.stop\" }}"
+run = "qs ipc -c mazapan call radio stop"
+keywords = "{{ t \"act.stop.kw\" }}"
