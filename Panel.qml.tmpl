@@ -87,7 +87,7 @@ Item {
     screenAtOpen = Quickshell.screens.find(s => Hyprland.focusedMonitor && s.name === Hyprland.focusedMonitor.name) ?? Quickshell.screens[0]
     open = true
     if (!view) go("popular", {{ tq "popular" }})
-    Qt.callLater(() => keys.forceActiveFocus())
+    Qt.callLater(() => sink.forceActiveFocus())
   }
   function close() { open = false }
 
@@ -143,7 +143,7 @@ Item {
           const typing = search.activeFocus
           if (event.key === Qt.Key_Escape) {
             if (typing && search.text) search.text = ""
-            else if (typing) keys.forceActiveFocus()
+            else if (typing) sink.forceActiveFocus()
             else root.close()
           } else if (typing) {
             return
@@ -166,6 +166,10 @@ Item {
           } else return
           event.accepted = true
         }
+
+        // Where the keys go when nothing is typed: always there, whichever
+        // list is shown; what it doesn't take, the handler above does.
+        Item { id: sink; focus: true }
 
         RowLayout {
           anchors.fill: parent
@@ -308,7 +312,7 @@ Item {
                   root.viewTitle = "“" + text.trim() + "”"
                   rd.browse("search", text.trim())
                   root.pickFirst = true
-                  keys.forceActiveFocus()
+                  sink.forceActiveFocus()
                 }
               }
               PillButton {
