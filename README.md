@@ -4,6 +4,8 @@ A plugin for [Mazapan](https://mazapan.dev), listed in its [plugin registry](htt
 
 ![Jazz, with the song's own cover (live stations, real songs)](media/panel.webp)
 
+▶ **[Watch the demo](media/demo.mp4)** (76 s, with sound): a search, a song's cover, a favorite, the songs heard, Playback, and "Radio: focus" from the palette.
+
 Live radio from all over the world, found the way you think of it: by
 mood first ("something to focus", "jazz"), then by country or by name. And
 the song playing is more than a line of text: its cover, its colors, and a
