@@ -1,7 +1,7 @@
 [plugin]
 id = "radio"
 name = "Radio"
-version = "0.1.2"
+version = "0.1.3"
 api = 1
 description = "Live radio from all over the world, found by mood, country or name: each song's cover and colors as it plays, the songs you heard to find again, favorites, a sleep timer and an alarm, and the media keys"
 requires = ["shell-bar", "hypr-base"]

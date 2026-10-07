@@ -159,6 +159,9 @@ def resolve(url, depth=0):
 NOISE = re.compile(r"\b[\w-]+\.(com|net|org|fm|radio|info|io|de|uk|fr|es|it|nl|ru|jp)\b|^(live|on air|now playing|advert\w*|commercial|news)$", re.I)
 
 
+ADS = re.compile(r"\b(advert\w*|commercial break|ad ?break|spot publicitaire|publicidad|werbung)\b", re.I)
+
+
 def split_song(text, station_name):
     """
     What a station says it plays, as {artist, title}: "Artist - Title" as
@@ -167,7 +170,8 @@ def split_song(text, station_name):
     """
     text = (text or "").strip()
     name = (station_name or "").strip().lower()
-    if not text:
+    # An ad break isn't a song.
+    if not text or ADS.search(text):
         return None
     def noise(part):
         p = part.strip().lower()
